@@ -20,8 +20,8 @@ RUN apt-get -qq update \
         ant \
         ssh-client \
         netcat \
-        dig \
-        iputils-ping \
+        dnsutils \
+        iputils \
         apt-transport-https \
         ca-certificates \
         gnupg-agent \
