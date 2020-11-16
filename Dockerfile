@@ -21,7 +21,7 @@ RUN apt-get -qq update \
         ssh-client \
         netcat \
         dnsutils \
-        iputils \
+        iputils-ping \
         apt-transport-https \
         ca-certificates \
         gnupg-agent \
