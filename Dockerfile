@@ -19,6 +19,8 @@ RUN apt-get -qq update \
         openjdk-8-jdk \
         ant \
         ssh-client \
+        netcat \
+        dig \
         iputils-ping \
         apt-transport-https \
         ca-certificates \
