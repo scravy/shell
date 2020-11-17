@@ -12,9 +12,7 @@ RUN apt-get -qq update \
         software-properties-common \
         build-essential \
         wget \
-        xvfb \
         git \
-        mercurial \
         maven \
         openjdk-8-jdk \
         ant \
@@ -27,19 +25,24 @@ RUN apt-get -qq update \
         gnupg-agent \
         < /dev/null \
         > /dev/null \
-    && python3 --version \
-    && pip3 --version
+    && apt-get clean
 
-RUN pip3 install pyyaml && \
-  pip3 install pyspark && \
-  pip3 install country-converter && \
-  pip3 install python-dateutil
-
+# install python dependencies
+RUN pip3 install --no-cache-dir \
+        pyyaml \
+        pyspark \
+        findspark \
+        pandas \
+        numpy \
+        scipy \
+        country-converter \
+        python-dateutil
 
 # aws cli
 RUN bash -c 'curl -s "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"' \
     && unzip -q awscliv2.zip \
     && ./aws/install \
+    && rm -rf aws awscliv2.zip \
     && aws --version
 
 # eksctl
@@ -55,38 +58,27 @@ RUN bash -c 'curl -s -LO "https://storage.googleapis.com/kubernetes-release/rele
 
 # helm3
 # as per https://helm.sh/docs/intro/install/
-RUN bash -c 'curl -s https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash' \
-    && helm version
-
+RUN bash -c 'curl -s https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash'
 
 # docker
-
-RUN curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add - && \
-    apt-key fingerprint 0EBFCD88 && \
-    bash -c 'add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"'
-
-RUN apt-get update && \
-    apt-get install -qq docker-ce docker-ce-cli containerd.io && \
-    docker --version
-
+RUN curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add - \
+    && apt-key fingerprint 0EBFCD88 \
+    && bash -c 'add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"' \
+    && apt-get update \
+    && apt-get install -qq docker-ce docker-ce-cli containerd.io \
+    && apt-get clean
 
 # nodejs
+RUN curl -sL https://deb.nodesource.com/setup_15.x | bash - \
+    && apt-get install -qq nodejs \
+    && apt-get clean
 
-RUN curl -sL https://deb.nodesource.com/setup_15.x | bash - && \
-    apt-get install -qq nodejs && \
-    node --version && \
-    npm --version
-
-RUN npm install -g json && \
-    json --version
-
+# nodejs tools
+RUN npm install -g json
 
 # shell config
-
 COPY bashrc /root/.bashrc
 
-
 # keep running indefinitely
-
 CMD tail -f /dev/null
 
