@@ -30,8 +30,6 @@ RUN apt-get -qq update \
 # install python dependencies
 RUN pip3 install --no-cache-dir \
         pyyaml \
-        pyspark \
-        findspark \
         pandas \
         numpy \
         scipy \
